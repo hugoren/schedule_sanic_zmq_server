@@ -1,21 +1,14 @@
 import asyncio
-import zmq
-import time
+from utils import redis_producer
 
 
-async def server_reply():
-    context = zmq.Context()
-    socket = context.socket(zmq.REP)
-    socket.bind("tcp://127.0.0.1:5555")
-    count = 0
+async def sync(jid, target, file_name):
+    with open(file_name, 'r') as f:
+            file_content = f.readlines()
 
-    while 1:
-        message = socket.recv()
-        count += 1
-        print("Received request: ", message, count)
-        time.sleep(1)
-        socket.send(bytes('{}--{}'.format(time.strftime("%Y%m%d%H%M%S"), "word"), encoding='utf-8'))
+    data = {"jid": jid, "target": target, "file_name": file_name, "command": "file_sync", "content": file_content}
+    await redis_producer('task', '{}'.format(data))
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(server_reply())
+    loop.run_until_complete(sync(target="127.0.0.1", file_name="tests.py"))

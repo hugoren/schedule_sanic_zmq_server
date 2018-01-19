@@ -1,8 +1,11 @@
 import logging
 import aioredis
 import asyncio
-from functools import wraps
+import redis
+from collections import deque
 from sanic.response import json
+from functools import wraps
+from threading import Event
 from config import TOKEN
 from logging.handlers import RotatingFileHandler
 from config import REDIS, REDIS_PORT
@@ -38,27 +41,63 @@ def auth(token):
     return wrapper
 
 
-async def redis_set(key, expire=10):
+async def redis_producer(key, value):
     redis = await aioredis.create_redis_pool(
-        (REDIS, REDIS_PORT), loop=asyncio.get_event_loop())
-    await redis.set(key=key, value='success', expire=expire)
-    print(key)
+        (REDIS, REDIS_PORT), db=0, loop=asyncio.get_event_loop())
+    await redis.rpush(key=key, value=value)
     redis.close()
     await redis.wait_closed()
+    return
 
 
-async def redis_del(key):
+async def redis_consumer(key):
     redis = await aioredis.create_redis_pool(
-        (REDIS, REDIS_PORT), loop=asyncio.get_event_loop())
-    await redis.delete(key=key)
-    redis.close()
-    await redis.wait_closed()
-
-
-async def redis_get(key):
-    redis = await aioredis.create_redis_pool(
-        (REDIS, REDIS_PORT), loop=asyncio.get_event_loop())
-    r = await redis.get(key=key)
+        (REDIS, REDIS_PORT), db=0, loop=asyncio.get_event_loop())
+    r = await redis.lpop(key=key)
     redis.close()
     await redis.wait_closed()
     return r
+
+
+def redis_get(key):
+    pool = redis.ConnectionPool(host='127.0.0.1', port=6379, db=1)
+    r = redis.Redis(connection_pool=pool)
+    v = r.get(key)
+    return v
+
+
+class TaskQueue:
+    def __init__(self):
+        self.q = deque()
+
+    def insert(self, data):
+        self.q.append(data)
+
+    def get(self):
+        if self.q:
+            r = self.q.pop()
+            return r
+
+
+def retry_wait(retry_count=0, interval_wait=0):
+    def wrap(f):
+        @wraps(f)
+        def func(*args, **kwargs):
+            try:
+                return f(*args, **kwargs)
+            except Exception as e:
+                if retry_count == 0:
+                    return str(e)
+                if retry_count >= 1:
+                    count = retry_count
+                    while 1:
+                        Event().wait(interval_wait)
+                        try:
+                            count = count - 1
+                            return f(*args, **kwargs)
+                        except Exception as e:
+                            if count == 0:
+                                return str(e)
+                            continue
+        return func
+    return wrap

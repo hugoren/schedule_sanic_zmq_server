@@ -1,8 +1,8 @@
 from sanic import Sanic
-from endpoint import bp_db
+from endpoint import schedule
 
 app = Sanic(__name__)
-app.blueprint(bp_db)
+app.blueprint(schedule)
 
 
 if __name__ == '__main__':

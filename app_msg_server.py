@@ -4,7 +4,7 @@ import zmq
 def server():
     context = zmq.Context()
     socket = context.socket(zmq.REP)
-    socket.connect("tcp://127.0.0.1:5560")
+    socket.connect("tcp://127.0.0.1:14507")
 
     while 1:
         message = socket.recv()
@@ -12,5 +12,5 @@ def server():
         print(message)
 
 
-
-server()
+if __name__ == '__main__':
+    server()

@@ -5,8 +5,8 @@ def broker():
     context = zmq.Context()
     frontend = context.socket(zmq.ROUTER)
     backend = context.socket(zmq.DEALER)
-    frontend.bind("tcp://*:5559")
-    backend.bind("tcp://*:5560")
+    frontend.bind("tcp://127.0.0.1:5559")
+    backend.bind("tcp://127.0.0.1:5560")
 
     poller = zmq.Poller()
     poller.register(frontend, zmq.POLLIN)

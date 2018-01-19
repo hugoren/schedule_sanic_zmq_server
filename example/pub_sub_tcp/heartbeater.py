@@ -52,7 +52,7 @@ def run():
     loop = ioloop.IOLoop()
     context = zmq.Context()
     pub = context.socket(zmq.PUB)
-    pub.bind('tcp://0.0.0.0:15555')
+    pub.bind('tcp://0.0.0.0:5555')
     router = context.socket(zmq.ROUTER)
     router.bind('tcp://0.0.0.0:15556')
     outstream = zmqstream.ZMQStream(pub, loop)
