@@ -4,7 +4,7 @@ from sanic import Blueprint
 from sanic.exceptions import NotFound
 from utils import auth
 from utils import retry_wait
-from utils import redis_get
+from utils import Redis
 from service import sync
 
 
@@ -21,7 +21,7 @@ async def file_sync(req):
 
         @retry_wait(retry_count=90, interval_wait=2)
         def wait_result():
-            r = redis_get(jid)
+            r = Redis().get(jid)
             if not r:
                 raise Exception("还获取不到值，重试3分钟")
             return r

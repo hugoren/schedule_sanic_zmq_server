@@ -7,6 +7,7 @@ async def sync(jid, target, file_name):
             file_content = f.readlines()
 
     data = {"jid": jid, "target": target, "file_name": file_name, "command": "file_sync", "content": file_content}
+    print(data)
     await redis_producer('task', '{}'.format(data))
 
 if __name__ == '__main__':

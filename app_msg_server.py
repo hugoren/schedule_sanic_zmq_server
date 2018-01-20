@@ -1,4 +1,6 @@
 import zmq
+import json
+from utils import Redis
 
 
 def server():
@@ -8,8 +10,9 @@ def server():
 
     while 1:
         message = socket.recv()
-        socket.send(bytes("Hello, {}".format('ff'), encoding="utf-8"))
-        print(message)
+        data = json.loads(eval(message))
+        socket.send(bytes("{0} message , received".format(data.get("jid")), encoding="utf-8"))
+        Redis().set(data.get('jid'), message)
 
 
 if __name__ == '__main__':

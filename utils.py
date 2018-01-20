@@ -59,11 +59,18 @@ async def redis_consumer(key):
     return r
 
 
-def redis_get(key):
-    pool = redis.ConnectionPool(host='127.0.0.1', port=6379, db=1)
-    r = redis.Redis(connection_pool=pool)
-    v = r.get(key)
-    return v
+class Redis:
+    def __init__(self):
+        self.pool = redis.ConnectionPool(host='127.0.0.1', port=6379, db=1)
+        self.r = redis.Redis(connection_pool=self.pool)
+
+    def get(self, key):
+        v = self.r.get(key)
+        return v
+
+    def set(self, key, value):
+        v = self.r.set(key, value)
+        return v
 
 
 class TaskQueue:

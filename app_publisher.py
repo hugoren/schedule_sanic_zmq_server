@@ -13,6 +13,7 @@ async def pub():
     socket.bind("tcp://127.0.0.1:{}".format(PUB_PORT))
     while 1:
         msg_queue = await redis_consumer('task')
+        print(msg_queue)
         if msg_queue:
             msg_queue = eval(msg_queue)
             topic = msg_queue.get('target')
