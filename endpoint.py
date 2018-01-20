@@ -21,7 +21,7 @@ async def file_sync(req):
 
         @retry_wait(retry_count=90, interval_wait=2)
         def wait_result():
-            r = Redis().get(jid)
+            r = Redis(1).get(jid)
             if not r:
                 raise Exception("还获取不到值，重试3分钟")
             return r

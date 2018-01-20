@@ -2,8 +2,7 @@ import time
 import zmq
 import asyncio
 from zmq.eventloop import ioloop, zmqstream
-from utils import redis_set
-from utils import redis_del
+from utils import Redis
 from config import HEART_PUB_PORT, HEART_ROUTER_PORT
 
 
@@ -51,13 +50,12 @@ class HeartBeater:
         2.不pong, 从redis删除
         """
         client_beat_time = float(msg[1])
-        loop = asyncio.get_event_loop()
+        print(client_beat_time)
         if client_beat_time == self.lifetime:
             print(msg[1])
-            loop.run_until_complete(redis_set(msg[0]))
+            Redis(2).set(key=msg[0], value="exist")
         else:
-            print('II')
-            loop.run_until_complete(redis_del(msg[0]))
+            Redis(2).delete(key=msg[0])
 
 
 def heartbeat_run():
