@@ -1,12 +1,13 @@
 import zmq
 import json
 from utils import Redis
+from config import MSG_BACKEND_PORT
 
 
 def server():
     context = zmq.Context()
     socket = context.socket(zmq.REP)
-    socket.connect("tcp://127.0.0.1:14507")
+    socket.connect("tcp://127.0.0.1:{}".format(MSG_BACKEND_PORT))
 
     while 1:
         message = socket.recv()
