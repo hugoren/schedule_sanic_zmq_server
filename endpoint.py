@@ -2,6 +2,7 @@ import uuid, time
 from sanic.response import json
 from sanic import Blueprint
 from sanic.exceptions import NotFound
+from sanic.exceptions import RequestTimeout
 from utils import auth
 from utils import retry_wait
 from utils import Redis
@@ -31,3 +32,8 @@ async def file_sync(req):
 @schedule.exception(NotFound)
 def ignore_404s(request, exception):
     return json("404, {} not found ".format(request.url))
+
+
+@schedule.exception(RequestTimeout)
+def timeout(request, exception):
+    return json('408, RequestTimeout from {0}'.format(request.url))
