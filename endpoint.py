@@ -25,8 +25,9 @@ async def file_sync(req):
     """
     target = req.json.get('target')
     file_name = req.json.get('file_name')
-    jid = str(uuid.uuid3(uuid.NAMESPACE_DNS, str(int(time.time() * 100000000000000000000000000000))))
-    await sync(jid, target, file_name)
+    if isinstance(target, (str,)) and isinstance(file_name, (str,)):
+        jid = str(uuid.uuid3(uuid.NAMESPACE_DNS, str(int(time.time() * 100000000000000000000000000000))))
+        await sync(jid, target, file_name)
 
     @retry_wait(retry_count=90, interval_wait=2)
     def wait_result():
