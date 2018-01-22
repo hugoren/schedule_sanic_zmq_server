@@ -17,17 +17,17 @@ schedule = Blueprint('schedule')
 async def file_sync(req):
     """
     指定同步目录
-    1.单节点,单文件同步 node_id, file_name
-    2.单节点, 所有文件同步 node_id, *
-    3.所有节点, 所有文件同步 *, *
+    单节点,单文件同步 node_id, file_name
     :param req:
-    :return:
+    :return: dict
     """
     target = req.json.get('target')
     file_name = req.json.get('file_name')
     if isinstance(target, (str,)) and isinstance(file_name, (str,)):
         jid = str(uuid.uuid3(uuid.NAMESPACE_DNS, str(int(time.time() * 100000000000000000000000000000))))
         await sync(jid, target, file_name)
+    else:
+        return "传参格式不合格"
 
     @retry_wait(retry_count=90, interval_wait=2)
     def wait_result():

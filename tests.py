@@ -11,7 +11,8 @@ def file_sync(target, file_name):
     print(r)
 
 
-file_sync(target="127.0.0.1", file_name="tests.py")
+for i in range(10):
+    file_sync(target="127.0.0.1", file_name="tests.py")
 
 
 

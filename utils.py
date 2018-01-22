@@ -2,6 +2,7 @@ import logging
 import aioredis
 import asyncio
 import redis
+import json as simplejson
 from collections import deque
 from sanic.response import json
 from functools import wraps
@@ -31,7 +32,12 @@ def auth(token):
                 value = req.headers.get(token)
                 if value and TOKEN == value:
                     r = await func(req, *arg, **kwargs)
-                    return json({'retcode': 0, 'stdout': r})
+                    if isinstance(r, dict):
+                        return json(r)
+                    if isinstance(r, str):
+                        return json({"retcode": 0, "stdout": r})
+                    else:
+                        return json({"retcode": 0, "stdout": r})
                 else:
                     return json({'retcode': 1, 'stderr': 'status{}'.format(403)})
             except Exception as e:
@@ -61,11 +67,15 @@ async def redis_consumer(key):
 
 class Redis:
     def __init__(self, db):
-        self.pool = redis.ConnectionPool(host='127.0.0.1', port=6379, db=db)
+        self.db = db
+        self.pool = redis.ConnectionPool(host='127.0.0.1', port=6379, db=self.db)
         self.r = redis.Redis(connection_pool=self.pool)
 
     def get(self, key):
         v = self.r.get(key)
+        if self.db == 1 and v:
+            v = simplejson.loads(str(v, encoding='utf-8'))
+            v = eval(v)
         return v
 
     def set(self, key, value):
