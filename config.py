@@ -24,3 +24,4 @@ else:
     MSG_BACKEND_PORT = 14507
     HEART_PUB_PORT = 14508
     HEART_ROUTER_PORT = 14509
+    SYNC_DIR = '/Users/admin/devops/schedule_sanic_zmq_server/sync_files'
