@@ -46,7 +46,6 @@ async def commands(req):
     command = req.json.get('command', 'command')
     script_name = req.json.get('script_name')
     fun_name = req.json.get('fun_name')
-    # 元组经过sanic转换过来时变成list
     args = req.json.get('args')
     kwargs = req.json.get('kwargs')
     jid = str(uuid.uuid3(uuid.NAMESPACE_DNS, str(int(time.time() * 100000000000000000000000000000))))
