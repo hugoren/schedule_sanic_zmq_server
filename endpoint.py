@@ -72,4 +72,4 @@ def ignore_404s(request, exception):
 
 @schedule.exception(RequestTimeout)
 def timeout(request, exception):
-    return json('408, RequestTimeout, {0}'.format(exception))
+    return json('408, {0}'.format(exception))
