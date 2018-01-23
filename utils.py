@@ -49,12 +49,37 @@ def auth(token):
                     else:
                         return json({"retcode": 0, "stdout": r})
                 else:
-                    return json({'retcode': 1, 'stderr': 'status{}'.format(403)})
+                    return json({"retcode": 1, "stderr": "status{}".format(403)})
             except Exception as e:
                 log('error', str(e))
                 return json({'retcode': 1, 'stderr': str(e)})
         return auth_token
     return wrapper
+
+
+def retry_wait(retry_count=0, interval_wait=0):
+    def wrap(f):
+        @wraps(f)
+        def func(*args, **kwargs):
+            try:
+                return f(*args, **kwargs)
+            except Exception as e:
+                if retry_count == 0:
+                    return str(e)
+                if retry_count >= 1:
+                    count = retry_count
+                    while 1:
+                        Event().wait(interval_wait)
+                        try:
+                            count = count - 1
+                            print(count)
+                            return f(*args, **kwargs)
+                        except Exception as e:
+                            if count == 0:
+                                return str(e)
+                            continue
+        return func
+    return wrap
 
 
 async def redis_producer(key, value):
@@ -111,27 +136,3 @@ class TaskQueue:
             r = self.q.pop()
             return r
 
-
-def retry_wait(retry_count=0, interval_wait=0):
-    def wrap(f):
-        @wraps(f)
-        def func(*args, **kwargs):
-            try:
-                return f(*args, **kwargs)
-            except Exception as e:
-                if retry_count == 0:
-                    return str(e)
-                if retry_count >= 1:
-                    count = retry_count
-                    while 1:
-                        Event().wait(interval_wait)
-                        try:
-                            count = count - 1
-                            print(count)
-                            return f(*args, **kwargs)
-                        except Exception as e:
-                            if count == 0:
-                                return str(e)
-                            continue
-        return func
-    return wrap

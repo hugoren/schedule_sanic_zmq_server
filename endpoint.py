@@ -30,10 +30,10 @@ async def file_sync(req):
     else:
         return "传参格式不合格"
 
-    @retry_wait(retry_count=90, interval_wait=2)
+    @retry_wait(retry_count=9, interval_wait=1)
     def wait_result():
         r = Redis(1).get(jid)
-        print(r, jid, 0)
+        print(0)
         if not r:
             raise Exception("还获取不到任务，重试等待3分钟")
         return r
