@@ -124,6 +124,7 @@ def retry_wait(retry_count=0, interval_wait=0):
                         Event().wait(interval_wait)
                         try:
                             count = count - 1
+                            print(count)
                             return f(*args, **kwargs)
                         except Exception as e:
                             if count == 0:

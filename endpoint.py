@@ -24,6 +24,7 @@ async def file_sync(req):
     """
     target = req.json.get('target')
     file_name = req.json.get('file_name')
+    print(file_name)
     if isinstance(target, (str,)) and isinstance(file_name, (str,)):
         jid = str(uuid.uuid3(uuid.NAMESPACE_DNS, str(int(time.time() * 100000000000000000000000000000))))
         await sync(jid, target, file_name)
@@ -71,4 +72,4 @@ def ignore_404s(request, exception):
 
 @schedule.exception(RequestTimeout)
 def timeout(request, exception):
-    return json('408, RequestTimeout from {0}, {1}'.format(request.url, exception))
+    return json('408, RequestTimeout, {0}'.format(exception))
