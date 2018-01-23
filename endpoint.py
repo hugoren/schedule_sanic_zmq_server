@@ -7,6 +7,7 @@ from utils import auth
 from utils import retry_wait
 from utils import Redis
 from service import sync
+from service import remote_command
 
 
 schedule = Blueprint('schedule')
@@ -38,11 +39,37 @@ async def file_sync(req):
     return wait_result()
 
 
+@schedule.route('/api/v1/schedule/command/', methods=['GET', 'POST'])
+@auth('token')
+async def commands(req):
+    target = req.json.get('target')
+    command = req.json.get('command', 'command')
+    script_name = req.json.get('script_name')
+    fun_name = req.json.get('fun_name')
+    # 元组经过sanic转换过来时变成list
+    args = req.json.get('args')
+    kwargs = req.json.get('kwargs')
+    jid = str(uuid.uuid3(uuid.NAMESPACE_DNS, str(int(time.time() * 100000000000000000000000000000))))
+    data = {'jid': jid, 'target': target,
+            'command': command, 'script_name': script_name, 'fun_name': fun_name,
+            'args': args, 'kwargs': kwargs
+            }
+    await remote_command(data)
+
+    @retry_wait(retry_count=90, interval_wait=2)
+    def wait_result():
+        r = Redis(1).get(jid)
+        if not r:
+            raise Exception("还获取不到任务，重试等待3分钟")
+        return r
+    return wait_result()
+
+
 @schedule.exception(NotFound)
 def ignore_404s(request, exception):
-    return json("404, {} not found ".format(request.url))
+    return json("404, {} not found, {1}".format(request.url, exception))
 
 
 @schedule.exception(RequestTimeout)
 def timeout(request, exception):
-    return json('408, RequestTimeout from {0}'.format(request.url))
+    return json('408, RequestTimeout from {0}, {1}'.format(request.url, exception))

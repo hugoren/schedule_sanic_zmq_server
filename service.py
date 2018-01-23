@@ -23,6 +23,10 @@ async def sync(jid, target, file_name):
     else:
         Redis(1).set(key=jid, value='{}'.format({"retcode": 1, "stderr": "{} 目录不存在".format(SYNC_DIR)}))
 
+
+async def remote_command(data):
+    await redis_producer('task', '{}'.format(data))
+
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
     loop.run_until_complete(sync(target="127.0.0.1", file_name="tests.py"))
