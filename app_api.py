@@ -6,4 +6,4 @@ app.blueprint(schedule)
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', workers=2, port=10011, debug=True)
+    app.run(host='0.0.0.0', workers=2, port=10011)

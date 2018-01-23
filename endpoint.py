@@ -60,7 +60,7 @@ async def commands(req):
     def wait_result():
         r = Redis(1).get(jid)
         if not r:
-            raise Exception("还获取不到任务，重试等待3分钟")
+            raise Exception("已重试等待3分钟, 未获取{}的任务结果".format(jid))
         return r
     return wait_result()
 
