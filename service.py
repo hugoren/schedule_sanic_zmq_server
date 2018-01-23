@@ -14,10 +14,10 @@ async def sync(jid, target, file_name):
             if target_exist:
                 with open(file_name, 'r') as f:
                         file_content = f.readlines()
-                data = {"jid": jid, "target": target, "file_name": file_name, "command": "file_sync", "content": file_content}
+                data = {"jid": jid, "target": target, "file_name": file_name, "command": "sync", "content": file_content}
                 await redis_producer('task', '{}'.format(data))
             else:
-                Redis(1).set(key=jid, value='{}'.format({"retcode": 1, "stderr": "{} 客户端断开".format(target)}))
+                Redis(1).set(key=jid, value='{}'.format({"retcode": 1, "stderr": "{}客户端断开".format(target)}))
         else:
             Redis(1).set(key=jid, value='{}'.format({"retcode": 1, "stderr": "{} 文件不存在".format(file_name)}))
     else:

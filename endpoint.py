@@ -24,7 +24,6 @@ async def file_sync(req):
     """
     target = req.json.get('target')
     file_name = req.json.get('file_name')
-    print(file_name)
     if isinstance(target, (str,)) and isinstance(file_name, (str,)):
         jid = str(uuid.uuid3(uuid.NAMESPACE_DNS, str(int(time.time() * 100000000000000000000000000000))))
         await sync(jid, target, file_name)
@@ -34,6 +33,7 @@ async def file_sync(req):
     @retry_wait(retry_count=90, interval_wait=2)
     def wait_result():
         r = Redis(1).get(jid)
+        print(r, jid, 0)
         if not r:
             raise Exception("还获取不到任务，重试等待3分钟")
         return r

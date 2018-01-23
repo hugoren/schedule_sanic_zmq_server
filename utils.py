@@ -88,8 +88,11 @@ class Redis:
             v = eval(v)
         return v
 
-    def set(self, key, value):
-        v = self.r.set(key, value)
+    def set(self, key, value, ex=None):
+        if ex:
+            v = self.r.set(key, value, ex=ex)
+        else:
+            v = self.r.set(key, value)
         return v
 
     def delete(self, key):

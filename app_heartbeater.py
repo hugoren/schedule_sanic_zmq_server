@@ -51,7 +51,7 @@ class HeartBeater:
         client_beat_time = float(msg[1])
         if client_beat_time == self.lifetime:
             print(msg[0])
-            Redis(2).set(key=msg[0], value="exist")
+            Redis(2).set(key=msg[0], value="exist", ex=10)
         else:
             Redis(2).delete(key=msg[0])
 
