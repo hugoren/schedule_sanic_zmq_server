@@ -19,7 +19,6 @@ def remote_command():
     target = '127.0.0.1'
     command = 'command'
     script_name = 'tests'
-    fun_name = 'test'
     args = ('a', 'b')
     kwargs = {"a": "a"}
     token = 'Schedule0350c8c75ddcd9fafdaA9738df4c9346bec48dc9c4915'
@@ -32,5 +31,5 @@ def remote_command():
     print(r)
 
 
-remote_command()
+# remote_command()
 
