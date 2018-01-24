@@ -121,12 +121,15 @@ class Redis:
         self.r = redis.Redis(connection_pool=self.pool)
 
     def get(self, key):
-        v = self.r.get(key)
-        if self.db == 1 and v:
-            v = eval(v)
-            if isinstance(v, str):
-                v = simplejson.loads(v)
-        return v
+        try:
+            v = self.r.get(key)
+            if self.db == 1 and v:
+                v = eval(v)
+                if isinstance(v, str):
+                    v = eval(v)
+            return v
+        except Exception as e:
+            log('error', str(e))
 
     def set(self, key, value, ex=None):
         if ex:
