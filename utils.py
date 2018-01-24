@@ -66,18 +66,22 @@ def retry_wait(retry_count=0, interval_wait=0):
             except Exception as e:
                 if retry_count == 0:
                     return str(e)
-                if retry_count >= 1:
-                    count = retry_count
-                    while 1:
-                        Event().wait(interval_wait)
-                        try:
-                            count = count - 1
-                            print(count)
-                            return f(*args, **kwargs)
-                        except Exception as e:
-                            if count == 0:
-                                return str(e)
-                            continue
+                if e == "retry":
+                    if retry_count >= 1:
+                        count = retry_count
+                        while 1:
+                            Event().wait(interval_wait)
+                            try:
+                                count = count - 1
+                                print(count)
+                                return f(*args, **kwargs)
+                            except Exception as e:
+                                print(e)
+                                if count == 0:
+                                    return str(e)
+                                continue
+                log('error', '函数{0}异常,{1}'.format("retry_wait", str(e)))
+                return str(e)
         return func
     return wrap
 
@@ -109,7 +113,11 @@ class Redis:
     def get(self, key):
         v = self.r.get(key)
         if self.db == 1 and v:
-            v = eval(v)
+            print(v)
+            if isinstance(v, bytes):
+                v = simplejson.loads(str(v, encoding="utf-8"))
+            else:
+                v = eval(v)
         return v
 
     def set(self, key, value, ex=None):

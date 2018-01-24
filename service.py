@@ -11,7 +11,6 @@ async def sync(jid, target, file_name):
         file_exist = pathlib.Path('{}/{}'.format(SYNC_DIR, file_name))
         if file_exist.is_file():
             target_exist = Redis(2).get(target)
-            print(target_exist)
             if target_exist:
                 with open(file_name, 'r') as f:
                         file_content = f.readlines()

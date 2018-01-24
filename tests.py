@@ -12,7 +12,6 @@ def file_sync(target, file_name):
 
 
 
-
 def remote_command():
     target = '127.0.0.1'
     command = 'command'
