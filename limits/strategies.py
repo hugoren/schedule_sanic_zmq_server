@@ -1,4 +1,3 @@
-
 import weakref
 import six
 from abc import ABCMeta, abstractmethod

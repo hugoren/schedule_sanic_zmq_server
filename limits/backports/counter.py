@@ -4,7 +4,7 @@ counter backport from http://code.activestate.com/recipes/576611-counter-class/
 
 from operator import itemgetter
 from heapq import nlargest
-from itertools import repeat, ifilter
+from itertools import repeat, filter
 
 
 class Counter(dict):
@@ -182,7 +182,7 @@ class Counter(dict):
         result = Counter()
         if len(self) < len(other):
             self, other = other, self
-        for elem in ifilter(self.__contains__, other):
+        for elem in filter(self.__contains__, other):
             newcount = _min(self[elem], other[elem])
             if newcount > 0:
                 result[elem] = newcount
