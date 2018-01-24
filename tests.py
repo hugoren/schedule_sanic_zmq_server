@@ -11,7 +11,6 @@ def file_sync(target, file_name):
     print(r)
 
 
-file_sync(target="127.0.0.1", file_name="tests.py")
 
 
 def remote_command():
@@ -30,5 +29,8 @@ def remote_command():
     print(r)
 
 
-# remote_command()
+if __name__ == '__main__':
+    # remote_command()
+
+    file_sync(target="127.0.0.1", file_name="tests.py")
 

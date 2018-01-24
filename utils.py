@@ -109,7 +109,6 @@ class Redis:
     def get(self, key):
         v = self.r.get(key)
         if self.db == 1 and v:
-            v = simplejson.loads(str(v, encoding='utf-8'))
             v = eval(v)
         return v
 

@@ -11,17 +11,18 @@ async def sync(jid, target, file_name):
         file_exist = pathlib.Path('{}/{}'.format(SYNC_DIR, file_name))
         if file_exist.is_file():
             target_exist = Redis(2).get(target)
+            print(target_exist)
             if target_exist:
                 with open(file_name, 'r') as f:
                         file_content = f.readlines()
                 data = {"jid": jid, "target": target, "file_name": file_name, "command": "sync", "content": file_content}
-                await redis_producer('task', '{}'.format(data))
+                await redis_producer("task", "{}".format(data))
             else:
-                Redis(1).set(key=jid, value='{}'.format({"retcode": 1, "stderr": "{}客户端断开".format(target)}))
+                Redis(1).set(key=jid, value="{}".format({"retcode": 1, "stderr": "{} client disconnects.".format(target)}))
         else:
-            Redis(1).set(key=jid, value='{}'.format({"retcode": 1, "stderr": "{} 文件不存在".format(file_name)}))
+            Redis(1).set(key=jid, value="{}".format({"retcode": 1, "stderr": "{} file does not exist".format(file_name)}))
     else:
-        Redis(1).set(key=jid, value='{}'.format({"retcode": 1, "stderr": "{} 目录不存在".format(SYNC_DIR)}))
+        Redis(1).set(key=jid, value="{}".format({"retcode": 1, "stderr": "{} directory does not exist".format(SYNC_DIR)}))
 
 
 async def remote_command(data):
