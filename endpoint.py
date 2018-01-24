@@ -34,7 +34,7 @@ async def file_sync(req):
     def wait_result():
         r = Redis(1).get(jid)
         if not r:
-            raise Exception("还获取不到任务，重试等待3分钟")
+            raise Exception("retry")
         return r
     return wait_result()
 

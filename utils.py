@@ -34,6 +34,16 @@ def log(level, message):
         logger.error(message)
 
 
+def try_exception(func):
+    def wrapper(*args, **kwargs):
+        try:
+            return func(args, kwargs)
+        except Exception as e:
+            log('error', str(e))
+            return str(e)
+    return wrapper()
+
+
 def auth(token):
     def wrapper(func):
         @wraps(func)
@@ -66,7 +76,7 @@ def retry_wait(retry_count=0, interval_wait=0):
             except Exception as e:
                 if retry_count == 0:
                     return str(e)
-                if e == "retry":
+                if str(e) == "retry":
                     if retry_count >= 1:
                         count = retry_count
                         while 1:
@@ -113,11 +123,7 @@ class Redis:
     def get(self, key):
         v = self.r.get(key)
         if self.db == 1 and v:
-            print(v)
-            if isinstance(v, bytes):
-                v = simplejson.loads(str(v, encoding="utf-8"))
-            else:
-                v = eval(v)
+            v = eval(v)
         return v
 
     def set(self, key, value, ex=None):
