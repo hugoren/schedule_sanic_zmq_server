@@ -124,6 +124,8 @@ class Redis:
         v = self.r.get(key)
         if self.db == 1 and v:
             v = eval(v)
+            if isinstance(v, str):
+                v = simplejson.loads(v)
         return v
 
     def set(self, key, value, ex=None):
