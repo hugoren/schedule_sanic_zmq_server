@@ -1,8 +1,5 @@
-"""
-
-"""
-from abc import abstractmethod, ABCMeta
 import inspect
+from abc import abstractmethod, ABCMeta
 
 from six.moves import urllib
 

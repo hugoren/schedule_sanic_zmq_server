@@ -1,12 +1,10 @@
-"""
-
-"""
 from six import add_metaclass
 
 try:
     from functools import total_ordering
 except ImportError:  # pragma: no cover
     from .backports.total_ordering import total_ordering  # pragma: no cover
+
 
 def safe_string(value):
     """
@@ -18,14 +16,17 @@ def safe_string(value):
         return value.decode()
     return str(value)
 
+
 TIME_TYPES = dict(
-    day=(60 * 60 * 24, "day"),
+
     month=(60 * 60 * 24 * 30, "month"),
     year=(60 * 60 * 24 * 30 * 12, "year"),
+    day=(60 * 60 * 24, "day"),
     hour=(60 * 60, "hour"),
     minute=(60, "minute"),
     second=(1, "second")
 )
+
 
 GRANULARITIES = {}
 
@@ -39,7 +40,6 @@ class RateLimitItemMeta(type):
         return granularity
 
 
-#pylint: disable=no-member
 @add_metaclass(RateLimitItemMeta)
 @total_ordering
 class RateLimitItem(object):

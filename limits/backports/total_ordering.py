@@ -1,7 +1,3 @@
-"""
-total_ordering backport from http://code.activestate.com/recipes/576685/
-"""
-
 def total_ordering(cls):
     'Class decorator that fills-in missing ordering methods'
     convert = {
