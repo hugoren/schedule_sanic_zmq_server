@@ -80,7 +80,7 @@ def retry_wait(retry_count=0, interval_wait=0):
                                 if count == 0:
                                     return str(e)
                                 continue
-                log('error', '函数{0}异常,{1}'.format("retry_wait", str(e)))
+                log('error', '函数{0}异常,{1}'.format(f.__name__, str(e)))
                 return str(e)
         return func
     return wrap
