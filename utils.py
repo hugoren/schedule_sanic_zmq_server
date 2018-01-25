@@ -97,21 +97,21 @@ def retry_wait(retry_count=0, interval_wait=0):
 
 
 async def redis_producer(key, value):
-    redis = await aioredis.create_redis_pool(
+    r = await aioredis.create_redis_pool(
         (REDIS, REDIS_PORT), db=0, loop=asyncio.get_event_loop())
-    await redis.rpush(key=key, value=value)
-    redis.close()
-    await redis.wait_closed()
+    await r.rpush(key=key, value=value)
+    r.close()
+    await r.wait_closed()
     return
 
 
 async def redis_consumer(key):
-    redis = await aioredis.create_redis_pool(
+    r = await aioredis.create_redis_pool(
         (REDIS, REDIS_PORT), db=0, loop=asyncio.get_event_loop())
-    r = await redis.lpop(key=key)
-    redis.close()
-    await redis.wait_closed()
-    return r
+    result = await r.lpop(key=key)
+    r.close()
+    await r.wait_closed()
+    return result
 
 
 class Redis:
@@ -153,4 +153,3 @@ class TaskQueue:
         if self.q:
             r = self.q.pop()
             return r
-
