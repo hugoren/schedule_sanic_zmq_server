@@ -2,7 +2,6 @@ import logging
 import aioredis
 import asyncio
 import redis
-import json as simplejson
 from collections import deque
 from sanic.response import json
 from functools import wraps
@@ -54,7 +53,7 @@ def auth(token):
                     r = await func(req, *arg, **kwargs)
                     if isinstance(r, dict):
                         return json(r)
-                    if isinstance(r, str):
+                    elif isinstance(r, str):
                         return json({"retcode": 0, "stdout": r})
                     else:
                         return json({"retcode": 0, "stdout": r})
