@@ -1,5 +1,8 @@
-import inspect
+"""
+
+"""
 from abc import abstractmethod, ABCMeta
+import inspect
 
 from six.moves import urllib
 
@@ -368,7 +371,6 @@ class RedisStorage(RedisInteractor, Storage):
         """
         :param str uri: uri of the form 'redis://host:port or redis://host:port/db'
         :raise ConfigurationError: when the redis library is not available
-         or if the redis host cannot be pinged.
         """
         if not get_dependency("redis"):
             raise ConfigurationError(
@@ -379,10 +381,6 @@ class RedisStorage(RedisInteractor, Storage):
         super(RedisStorage, self).__init__()
 
     def initialize_storage(self, uri):
-        if not self.storage.ping():
-            raise ConfigurationError(
-                "unable to connect to redis at %s" % uri
-            )  # pragma: no cover
         self.lua_moving_window = self.storage.register_script(
             self.SCRIPT_MOVING_WINDOW
         )
@@ -404,9 +402,8 @@ class RedisStorage(RedisInteractor, Storage):
         :param int expiry: amount in seconds for the key to expire in
         """
         if elastic_expiry:
-            return super(RedisStorage,self).incr(
-                key, expiry, self.storage, elastic_expiry
-            )
+            return super(RedisStorage,
+                         self).incr(key, expiry, self.storage, elastic_expiry)
         else:
             return self.lua_incr_expire([key], [expiry])
 
@@ -662,7 +659,8 @@ class MemcachedStorage(Storage):
                 retry = 0
                 while (
                     not self.call_memcached_func(
-                        self.storage.cas, key, int(value or 0) + 1, cas, expiry
+                        self.storage.cas, key,
+                        int(value or 0) + 1, cas, expiry
                     ) and retry < self.MAX_CAS_RETRIES
                 ):
                     value, cas = self.storage.gets(key)
@@ -730,7 +728,8 @@ class GAEMemcachedStorage(MemcachedStorage):
                 retry = 0
                 while (
                     not self.call_memcached_func(
-                        self.storage.cas, key, int(value or 0) + 1, expiry
+                        self.storage.cas, key,
+                        int(value or 0) + 1, expiry
                     ) and retry < self.MAX_CAS_RETRIES
                 ):
                     value = self.storage.gets(key)

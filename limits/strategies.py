@@ -1,6 +1,11 @@
+"""
+rate limiting strategies
+"""
+
+from abc import ABCMeta, abstractmethod
 import weakref
 import six
-from abc import ABCMeta, abstractmethod
+import time
 
 
 @six.add_metaclass(ABCMeta)
@@ -176,11 +181,7 @@ class FixedWindowElasticExpiryRateLimiter(FixedWindowRateLimiter):
 
 
 STRATEGIES = {
-    "moving-window": MovingWindowRateLimiter,
     "fixed-window": FixedWindowRateLimiter,
     "fixed-window-elastic-expiry": FixedWindowElasticExpiryRateLimiter,
-
+    "moving-window": MovingWindowRateLimiter
 }
-
-
-

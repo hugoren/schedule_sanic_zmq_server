@@ -1,5 +1,5 @@
 asyncio==3.4.3
-sanic==0.5.4
+sanic==0.6
 uvloop==0.8.0
 pyzmq==16.0.3
 six==1.10.0

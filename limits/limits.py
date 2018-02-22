@@ -1,3 +1,6 @@
+"""
+
+"""
 from six import add_metaclass
 
 try:
@@ -18,15 +21,13 @@ def safe_string(value):
 
 
 TIME_TYPES = dict(
-
+    day=(60 * 60 * 24, "day"),
     month=(60 * 60 * 24 * 30, "month"),
     year=(60 * 60 * 24 * 30 * 12, "year"),
-    day=(60 * 60 * 24, "day"),
     hour=(60 * 60, "hour"),
     minute=(60, "minute"),
     second=(1, "second")
 )
-
 
 GRANULARITIES = {}
 
@@ -40,6 +41,7 @@ class RateLimitItemMeta(type):
         return granularity
 
 
+#pylint: disable=no-member
 @add_metaclass(RateLimitItemMeta)
 @total_ordering
 class RateLimitItem(object):
@@ -81,10 +83,10 @@ class RateLimitItem(object):
         :return: a string key identifying this resource with
          each identifier appended with a '/' delimiter.
         """
-        remainder = "/".join(
-            [safe_string(k) for k in identifiers] +
-            [safe_string(self.amount), safe_string(self.multiples), self.granularity[1]]
-        )
+        remainder = "/".join([safe_string(k) for k in identifiers] + [
+            safe_string(self.amount),
+            safe_string(self.multiples), self.granularity[1]
+        ])
         return "%s/%s" % (self.namespace, remainder)
 
     def __eq__(self, other):
